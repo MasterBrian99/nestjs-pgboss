@@ -59,6 +59,19 @@ describe("PgBossService", () => {
         handler,
       );
     });
+
+    it("should pass queue options to createQueue", async () => {
+      const handler = vi.fn();
+      const queueOptions = { retryLimit: 5, retryDelay: 30 };
+
+      await service.registerJob("test-job", handler, {}, queueOptions);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockPgBoss.createQueue).toHaveBeenCalledWith(
+        "test-job",
+        queueOptions,
+      );
+    });
   });
 
   describe("scheduleJob", () => {

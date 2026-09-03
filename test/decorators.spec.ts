@@ -5,6 +5,7 @@ import {
   CronJob,
   JOB_NAME,
   JOB_OPTIONS,
+  QUEUE_OPTIONS,
   CRON_EXPRESSION,
   CRON_OPTIONS,
   PG_BOSS_JOB_METADATA,
@@ -22,9 +23,11 @@ describe("Job Decorator", () => {
 
     expect(Reflect.getMetadata(JOB_NAME, method)).toBe("test-job");
     expect(Reflect.getMetadata(JOB_OPTIONS, method)).toEqual({});
+    expect(Reflect.getMetadata(QUEUE_OPTIONS, method)).toEqual({});
     expect(Reflect.getMetadata(PG_BOSS_JOB_METADATA, method)).toEqual({
       jobName: "test-job",
       workOptions: {},
+      queueOptions: {},
     });
   });
 
@@ -45,7 +48,37 @@ describe("Job Decorator", () => {
     expect(Reflect.getMetadata(PG_BOSS_JOB_METADATA, method)).toEqual({
       jobName: "custom-job",
       workOptions: options,
+      queueOptions: {},
     });
+  });
+
+  it("should store queue options in QUEUE_OPTIONS metadata", () => {
+    const queueOptions = { retryLimit: 5, retryDelay: 30 };
+
+    class TestClass {
+      @Job("queue-job", {}, queueOptions)
+      handle() {}
+    }
+
+    const method = TestClass.prototype.handle;
+
+    expect(Reflect.getMetadata(QUEUE_OPTIONS, method)).toEqual(queueOptions);
+    expect(Reflect.getMetadata(PG_BOSS_JOB_METADATA, method)).toEqual({
+      jobName: "queue-job",
+      workOptions: {},
+      queueOptions,
+    });
+  });
+
+  it("should default queue options to {}", () => {
+    class TestClass {
+      @Job("default-queue-job")
+      handle() {}
+    }
+
+    const method = TestClass.prototype.handle;
+
+    expect(Reflect.getMetadata(QUEUE_OPTIONS, method)).toEqual({});
   });
 });
 

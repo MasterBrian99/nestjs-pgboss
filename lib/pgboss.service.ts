@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   WorkWithMetadataHandler,
   PgBoss,
+  QueueOptions,
   SendOptions,
   ScheduleOptions,
   WorkOptions,
@@ -63,8 +64,9 @@ export class PgBossService {
     name: string,
     handler: WorkWithMetadataHandler<TData>,
     options?: WorkOptions,
+    queueOptions?: QueueOptions,
   ) {
-    await this.pgBoss.createQueue(name);
+    await this.pgBoss.createQueue(name, queueOptions);
     await this.pgBoss.work(
       name,
       { ...options, includeMetadata: true },

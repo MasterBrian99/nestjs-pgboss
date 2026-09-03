@@ -23,6 +23,7 @@ import { PgBossService } from "../lib/pgboss.service";
 import {
   JOB_NAME,
   JOB_OPTIONS,
+  QUEUE_OPTIONS,
   CRON_EXPRESSION,
   CRON_OPTIONS,
 } from "../lib/decorators/job.decorator";
@@ -100,6 +101,53 @@ describe("HandlerScannerService", () => {
       "test-job",
       expect.any(Function),
       { teamSize: 2 },
+      undefined,
+    );
+  });
+
+  it("should pass QUEUE_OPTIONS metadata to registerJob", async () => {
+    const handler = vi.fn();
+    const instance = {
+      handle: handler,
+    };
+    Object.setPrototypeOf(
+      instance,
+      Object.create(null, {
+        constructor: { value: class {} },
+        handle: { value: handler, enumerable: true },
+      }) as object,
+    );
+
+    const reflectorGetSpy = vi.spyOn(reflector, "get");
+    reflectorGetSpy.mockImplementation((key: any, target: any) => {
+      if (target === handler) {
+        if (key === JOB_NAME) return "queue-job";
+        if (key === JOB_OPTIONS) return {};
+        if (key === QUEUE_OPTIONS) return { retryLimit: 5 };
+      }
+      return undefined;
+    });
+
+    const fakeModule = {
+      providers: new Map([
+        [
+          "TestProvider",
+          {
+            instance,
+            metatype: class {},
+          },
+        ],
+      ]),
+    };
+    (modulesContainer as Map<string, any>).set("TestModule", fakeModule);
+
+    await scanner.scanAndRegisterHandlers();
+
+    expect(pgBossService.registerJob).toHaveBeenCalledWith(
+      "queue-job",
+      expect.any(Function),
+      {},
+      { retryLimit: 5 },
     );
   });
 
