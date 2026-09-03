@@ -36,4 +36,4 @@ Source code is in `lib/` (not `src/`), configured via `nest-cli.json` with `sour
 
 ## Peer Dependencies
 
-Requires `@nestjs/common` ^11, `@nestjs/core` ^11, `pg-boss` >=12.6.0.
+Requires `@nestjs/common` ^12, `@nestjs/core` ^12, `pg-boss` >=12.6.0.

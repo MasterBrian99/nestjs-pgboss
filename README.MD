@@ -28,6 +28,8 @@
 
 ## Installation
 
+Version 7 requires NestJS 12 and Node.js 20.19+ or 22.12+.
+
 ```bash
 npm install pg-boss @wavezync/nestjs-pgboss
 ```
