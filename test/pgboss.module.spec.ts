@@ -1,10 +1,14 @@
-jest.mock("pg-boss", () => {
+import type { Mocked } from "vitest";
+
+vi.mock("pg-boss", () => {
   return {
-    PgBoss: jest.fn().mockImplementation(() => ({
-      on: jest.fn(),
-      start: jest.fn(),
-      stop: jest.fn(),
-    })),
+    PgBoss: vi.fn().mockImplementation(function PgBossMock() {
+      return {
+        on: vi.fn(),
+        start: vi.fn(),
+        stop: vi.fn(),
+      };
+    }),
   };
 });
 
@@ -16,18 +20,18 @@ import { MetadataScanner } from "@nestjs/core";
 
 describe("PgBossModule", () => {
   let mockBoss: any;
-  let mockHandlerScanner: jest.Mocked<
+  let mockHandlerScanner: Mocked<
     Pick<HandlerScannerService, "scanAndRegisterHandlers">
   >;
   let module: PgBossModule;
 
   beforeEach(() => {
     mockBoss = {
-      on: jest.fn(),
-      stop: jest.fn().mockResolvedValue(undefined),
+      on: vi.fn(),
+      stop: vi.fn().mockResolvedValue(undefined),
     };
     mockHandlerScanner = {
-      scanAndRegisterHandlers: jest.fn().mockResolvedValue(undefined),
+      scanAndRegisterHandlers: vi.fn().mockResolvedValue(undefined),
     };
     module = new PgBossModule(mockBoss, mockHandlerScanner as any);
   });
@@ -58,7 +62,7 @@ describe("PgBossModule", () => {
 
   describe("forRootAsync", () => {
     it("should return correct module structure with useFactory", () => {
-      const factory = jest.fn();
+      const factory = vi.fn();
       const result = PgBossModule.forRootAsync({
         useFactory: factory,
         inject: ["CONFIG"],
@@ -106,7 +110,7 @@ describe("PgBossModule", () => {
       const fakeModule = { module: class FakeModule {} } as any;
       const result = PgBossModule.forRootAsync({
         imports: [fakeModule],
-        useFactory: jest.fn(),
+        useFactory: vi.fn(),
       });
 
       expect(result.imports).toContain(fakeModule);
@@ -114,7 +118,7 @@ describe("PgBossModule", () => {
 
     it("should default imports to empty array", () => {
       const result = PgBossModule.forRootAsync({
-        useFactory: jest.fn(),
+        useFactory: vi.fn(),
       });
 
       expect(result.imports).toEqual([]);
