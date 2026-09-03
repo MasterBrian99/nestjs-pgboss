@@ -1,0 +1,1 @@
+# Example Project using Nestjs v12, Kysely and Joi
