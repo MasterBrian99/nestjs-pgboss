@@ -6,6 +6,7 @@
   "author": "dev@wavezync.com",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": ["dist", "README.MD", "LICENSE", "CHANGELOG.md"],
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"lib/**/*.ts\" \"test/**/*.ts\"",
