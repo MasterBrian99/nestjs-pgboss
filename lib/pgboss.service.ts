@@ -50,7 +50,7 @@ export class PgBossService {
   ) {
     await this.pgBoss.createQueue(name);
     await this.pgBoss.schedule(name, cron, data ?? {}, options ?? {});
-    await this.pgBoss.work<TData>(
+    await this.pgBoss.work(
       name,
       { ...transformOptions(options), includeMetadata: true } as WorkOptions & {
         includeMetadata: true;
@@ -65,7 +65,7 @@ export class PgBossService {
     options?: WorkOptions,
   ) {
     await this.pgBoss.createQueue(name);
-    await this.pgBoss.work<TData>(
+    await this.pgBoss.work(
       name,
       { ...options, includeMetadata: true },
       handler,
