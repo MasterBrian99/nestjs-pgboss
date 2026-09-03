@@ -1,4 +1,6 @@
-import type { Mocked } from "vitest";
+import type { Mock, Mocked } from "vitest";
+import type { DynamicModule } from "@nestjs/common";
+import type { PgBoss } from "pg-boss";
 
 vi.mock("pg-boss", () => {
   return {
@@ -18,8 +20,10 @@ import { PgBossService } from "../lib/pgboss.service";
 import { PGBOSS_OPTIONS, PGBOSS_TOKEN } from "../lib/utils/consts";
 import { MetadataScanner } from "@nestjs/core";
 
+type MockBoss = { on: Mock; stop: Mock };
+
 describe("PgBossModule", () => {
-  let mockBoss: any;
+  let mockBoss: MockBoss;
   let mockHandlerScanner: Mocked<
     Pick<HandlerScannerService, "scanAndRegisterHandlers">
   >;
@@ -33,7 +37,10 @@ describe("PgBossModule", () => {
     mockHandlerScanner = {
       scanAndRegisterHandlers: vi.fn().mockResolvedValue(undefined),
     };
-    module = new PgBossModule(mockBoss, mockHandlerScanner as any);
+    module = new PgBossModule(
+      mockBoss as unknown as PgBoss,
+      mockHandlerScanner as unknown as HandlerScannerService,
+    );
   });
 
   it("should register error event listener on boss in constructor", () => {
@@ -72,8 +79,8 @@ describe("PgBossModule", () => {
       expect(result.exports).toContain(PgBossService);
       expect(result.exports).toContain(PGBOSS_TOKEN);
 
-      const providerTokens = (result.providers as any[]).map(
-        (p: any) => p.provide || p,
+      const providerTokens = result.providers.map((p) =>
+        "provide" in p ? p.provide : p,
       );
       expect(providerTokens).toContain(PGBOSS_OPTIONS);
       expect(providerTokens).toContain(PGBOSS_TOKEN);
@@ -97,8 +104,8 @@ describe("PgBossModule", () => {
       expect(result.exports).toContain(PgBossService);
       expect(result.exports).toContain(PGBOSS_TOKEN);
 
-      const providerTokens = (result.providers as any[]).map(
-        (p: any) => p.provide || p,
+      const providerTokens = result.providers.map((p) =>
+        "provide" in p ? p.provide : p,
       );
       expect(providerTokens).toContain(PGBOSS_OPTIONS);
       expect(providerTokens).toContain(PGBOSS_TOKEN);
@@ -107,7 +114,7 @@ describe("PgBossModule", () => {
     });
 
     it("should pass imports through", () => {
-      const fakeModule = { module: class FakeModule {} } as any;
+      const fakeModule: DynamicModule = { module: class FakeModule {} };
       const result = PgBossModule.forRootAsync({
         imports: [fakeModule],
         useFactory: vi.fn(),

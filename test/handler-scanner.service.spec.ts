@@ -69,7 +69,7 @@ describe("HandlerScannerService", () => {
       Object.create(null, {
         constructor: { value: class {} },
         handle: { value: handler, enumerable: true },
-      }),
+      }) as object,
     );
 
     const reflectorGetSpy = vi.spyOn(reflector, "get");
@@ -113,7 +113,7 @@ describe("HandlerScannerService", () => {
       Object.create(null, {
         constructor: { value: class {} },
         handle: { value: handler, enumerable: true },
-      }),
+      }) as object,
     );
 
     const reflectorGetSpy = vi.spyOn(reflector, "get");
@@ -173,7 +173,7 @@ describe("HandlerScannerService", () => {
       Object.create(null, {
         constructor: { value: class {} },
         someMethod: { value: vi.fn(), enumerable: true },
-      }),
+      }) as object,
     );
 
     vi.spyOn(reflector, "get").mockReturnValue(undefined);
@@ -199,7 +199,7 @@ describe("HandlerScannerService", () => {
       Object.create(null, {
         constructor: { value: class {} },
         handle: { value: handler, enumerable: true },
-      }),
+      }) as object,
     );
 
     vi.spyOn(reflector, "get").mockImplementation((key: any, target: any) => {
@@ -233,7 +233,7 @@ describe("HandlerScannerService", () => {
       Object.create(null, {
         constructor: { value: class {} },
         handle: { value: handler, enumerable: true },
-      }),
+      }) as object,
     );
 
     vi.spyOn(reflector, "get").mockImplementation((key: any, target: any) => {
@@ -257,7 +257,7 @@ describe("HandlerScannerService", () => {
   });
 
   it("should skip prototype getters that throw (e.g. TypeORM DataSource.mongoManager)", async () => {
-    const proto = Object.create(null);
+    const proto = Object.create(null) as object;
     Object.defineProperty(proto, "constructor", { value: class {} });
     Object.defineProperty(proto, "mongoManager", {
       get() {
@@ -272,7 +272,7 @@ describe("HandlerScannerService", () => {
       enumerable: true,
     });
 
-    const instance = Object.create(proto);
+    const instance = Object.create(proto) as object;
 
     vi.spyOn(reflector, "get").mockReturnValue(undefined);
 

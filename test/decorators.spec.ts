@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import type { WorkOptions } from "pg-boss";
 import {
   Job,
   CronJob,
@@ -28,7 +29,10 @@ describe("Job Decorator", () => {
   });
 
   it("should pass custom WorkOptions through", () => {
-    const options = { teamSize: 5, teamConcurrency: 2 } as any;
+    const options = {
+      teamSize: 5,
+      teamConcurrency: 2,
+    } as unknown as WorkOptions;
 
     class TestClass {
       @Job("custom-job", options)

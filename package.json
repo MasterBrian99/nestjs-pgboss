@@ -53,19 +53,6 @@
     "typescript": "~6.0.0",
     "vitest": "^4.1.2"
   },
-  "jest": {
-    "roots": [
-      "<rootDir>/test"
-    ],
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ]
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wavezync/nestjs-pgboss"
